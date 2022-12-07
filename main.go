@@ -1,25 +1,31 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
+	"github.com/gorilla/mux"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 type Employee struct {
+	ID    int
 	Email string
 	Phone string
 	Role  string
 }
 
 type Task struct {
+	ID   int
 	Name string
 }
 
 type EmployeeTask struct {
+	ID         int
 	EmployeeID int
 	TaskID     int
 }
@@ -50,9 +56,41 @@ func main() {
 	// Close Database Connection
 	defer db.Close()
 
-	// Since I'm not using the gorm.Model, skipping Migrations for now
+	// Since I'm not using the gorm.Model, skip Migrations
 	//db.AutoMigrate(&Employee{})
 	//db.AutoMigrate(&Task{})
 	//db.AutoMigrate(&EmployeeTask{})
 
+	// API routes
+	router := mux.NewRouter()
+
+	router.HandleFunc("/employees", getEmployees).Methods("GET")
+	router.HandleFunc("/employee/{id}", getEmployee).Methods("GET")
+	router.HandleFunc("/tasks", getTasks).Methods("GET")
+
+	http.ListenAndServe(":8080", router)
+
+}
+
+func getEmployees(w http.ResponseWriter, r *http.Request) {
+	var employees []Employee
+	db.Find(&employees)
+	json.NewEncoder(w).Encode(&employees)
+}
+
+func getEmployee(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+
+	var employee Employee
+
+	// Find the first record matching the condition, ordered by Primary Key
+	db.First(&employee, params["id"])
+
+	json.NewEncoder(w).Encode(&employee)
+}
+
+func getTasks(w http.ResponseWriter, r *http.Request) {
+	var tasks []Task
+	db.Find(&tasks)
+	json.NewEncoder(w).Encode(&tasks)
 }
