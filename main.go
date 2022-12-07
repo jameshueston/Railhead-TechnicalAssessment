@@ -30,13 +30,10 @@ type EmployeeTask struct {
 	TaskID     int
 }
 
-type Tabler interface {
-	TableName() string
-}
-
-// TableName overrides the table name used by EmployeeTask to `employeetask`
-func (EmployeeTask) TableName() string {
-	return "employeetask"
+// EmployeeEmailTaskName serves the endpoint: getEmployeesByTaskName
+type EmployeeEmailTaskName struct {
+	EmployeeEmail string
+	TaskName      string
 }
 
 // Global Vars
@@ -65,11 +62,6 @@ func main() {
 	// Close Database Connection
 	defer db.Close()
 
-	// Since I'm not using the gorm.Model, skip Migrations
-	//db.AutoMigrate(&Employee{})
-	//db.AutoMigrate(&Task{})
-	//db.AutoMigrate(&EmployeeTask{})
-
 	// API routes
 	router := mux.NewRouter()
 
@@ -80,8 +72,8 @@ func main() {
 	router.HandleFunc("/tasks", getTasks).Methods("GET")
 	router.HandleFunc("/task/{id}", getTask).Methods("GET")
 
+	fmt.Println("Now Serving on localhost:8080")
 	http.ListenAndServe(":8080", router)
-
 }
 
 func getEmployees(w http.ResponseWriter, r *http.Request) {
@@ -92,12 +84,8 @@ func getEmployees(w http.ResponseWriter, r *http.Request) {
 
 func getEmployee(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-
 	var employee Employee
-
-	// Find the first record matching the condition, ordered by Primary Key
 	db.First(&employee, params["id"])
-
 	json.NewEncoder(w).Encode(&employee)
 }
 
@@ -114,50 +102,15 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&task)
 }
 
-type EmployeeEmailTaskName struct {
-	EmployeeEmail string
-	TaskName      string
-}
-
+// getEmployeesByTaskName takes 'searchterm' from the endpoint and
+// returns a standard API response as JSON
+// with Employee Email and Task Names where 'searchterm' partially matches Task.Name
+// case-insensitive by using Inner Joins on the EmployeeTask table
 func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
-	//params := mux.Vars(r)
-
-	//var employees []Employee
-	//var task Task
-	//var employeeTasks []EmployeeTask
-
-	// "searchterm" accepts partial name matches, case-insensitive
-	// db.First(&task, params["searchterm"])
-	// now the task we want should be in &task with task.ID searchable in EmployeeTask
-
-	//whereConditionFormatted := fmt.Sprintf("LOWER(Tasks.Name) LIKE LOWER('\%%s\%')", params["searchterm"])
-	db.LogMode(true)
-
-	//var results []map[string]interface{}
-	//db.Table("users").Find(&results)
-
-	//db.Raw("SELECT Employees.email AS EmployeeEmail, Tasks.Name AS TaskName FROM ((EmployeeTask INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID) INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID) WHERE LOWER(Tasks.Name) LIKE LOWER('%new%')").Scan(&results)
-	// Finally decided to execute raw
-	// Created a new struct with only EmployeeEmail and TaskName but Gorm wouldn't write to it
-	// Resorted to the old manual extrapoloation
-	var employeeEmail string
-	var taskName string
-	var employeeEmailTaskNames []EmployeeEmailTaskName
-
-	rows, err := db.Raw("SELECT Employees.email AS EmployeeEmail, Tasks.Name AS TaskName FROM ((EmployeeTask INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID) INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID) WHERE LOWER(Tasks.Name) LIKE LOWER('%new%')").Rows()
-	if err != nil {
-		panic(err)
-	}
-	defer rows.Close()
-	for rows.Next() {
-		rows.Scan(&employeeEmail, &taskName)
-		// The following debug prints, so saving that, remarshalling
-		fmt.Println("EmployeeEmail:" + employeeEmail + " TaskName: " + taskName)
-		result := EmployeeEmailTaskName{EmployeeEmail: employeeEmail, TaskName: taskName}
-		employeeEmailTaskNames = append(employeeEmailTaskNames, result)
-	}
+	params := mux.Vars(r)
 
 	/*
+		// Leaving in these attempts to show thought development
 		// First I wrote raw SQL that WORKS
 		SELECT Employees.email AS EmployeeEmail, Tasks.Name AS TaskName
 		FROM ((EmployeeTask
@@ -165,7 +118,8 @@ func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
 		INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID)
 		WHERE LOWER(Tasks.Name) LIKE LOWER('%new%');
 
-		// Next, I tried but failed several Gorm idiomatic Joins: https://gorm.io/docs/query.html#Joins
+		// Next, I tried but failed several idiomatic Gorm Joins: https://gorm.io/docs/query.html#Joins
+		// the following are succinct highlights
 		db.Model(&EmployeeTask{}).Select(
 		"Employees.email, Tasks.name").Joins(
 		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
@@ -182,13 +136,31 @@ func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
 		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
 		"LOWER(Tasks.Name) LIKE LOWER('%" + params["searchterm"] + "%')").Scan(&results)
 
-		// WORKS to return Employee Fields but I wanted Task Name, too
+		// WORKS to return Employee Fields but I wanted Task Name and Gorm didn't like that
 		db.Table("employeetask").Select("Employees.ID, Employees.email, Employees.Phone, Employees.Role").Joins(
 		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
 		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
 		"LOWER(Tasks.Name) LIKE LOWER('%" + params["searchterm"] + "%')").Scan(&employees)
+
+		Finally decided to execute raw and extra raw from row data, then remarshal to json as shown below
 	*/
 
-	fmt.Println(&employeeEmailTaskNames)
+	var employeeEmail string
+	var taskName string
+	var employeeEmailTaskNames []EmployeeEmailTaskName
+
+	rows, err := db.Raw("SELECT Employees.email AS EmployeeEmail, Tasks.Name AS TaskName FROM ((EmployeeTask INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID) INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID) WHERE LOWER(Tasks.Name) LIKE LOWER('%" + params["searchterm"] + "%')").Rows()
+	if err != nil {
+		panic(err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		rows.Scan(&employeeEmail, &taskName)
+		// The following confirmed after several attempts I had the right data, commented for posterity
+		//fmt.Println("EmployeeEmail:" + employeeEmail + " TaskName: " + taskName)
+		result := EmployeeEmailTaskName{EmployeeEmail: employeeEmail, TaskName: taskName}
+		employeeEmailTaskNames = append(employeeEmailTaskNames, result)
+	}
+
 	json.NewEncoder(w).Encode(&employeeEmailTaskNames)
 }
