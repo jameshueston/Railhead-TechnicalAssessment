@@ -66,7 +66,9 @@ func main() {
 
 	router.HandleFunc("/employees", getEmployees).Methods("GET")
 	router.HandleFunc("/employee/{id}", getEmployee).Methods("GET")
+
 	router.HandleFunc("/tasks", getTasks).Methods("GET")
+	router.HandleFunc("/task/{id}", getTask).Methods("GET")
 
 	http.ListenAndServe(":8080", router)
 
@@ -93,4 +95,11 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 	var tasks []Task
 	db.Find(&tasks)
 	json.NewEncoder(w).Encode(&tasks)
+}
+
+func getTask(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var task Task
+	db.First(&task, params["id"])
+	json.NewEncoder(w).Encode(&task)
 }
