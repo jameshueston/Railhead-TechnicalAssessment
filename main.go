@@ -7,11 +7,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/gorilla/mux"                     // Serves API Routes
+	"github.com/jinzhu/gorm"                     // Facilitates postgres db queries
+	_ "github.com/jinzhu/gorm/dialects/postgres" // Enables gorm to use postgres driver
 )
 
+// Employee matches the Employee Table
 type Employee struct {
 	ID    int
 	Email string
@@ -19,11 +20,13 @@ type Employee struct {
 	Role  string
 }
 
+// Task matches the Task Table
 type Task struct {
 	ID   int
 	Name string `gorm:"column:task_name"`
 }
 
+// EmployeeTask matches the EmployeeTask Table
 type EmployeeTask struct {
 	ID         int
 	EmployeeID int
@@ -40,6 +43,8 @@ type EmployeeEmailTaskName struct {
 var db *gorm.DB
 var err error
 
+// main opens the database connection, starts an http lisetener, and
+// keeps running until the process is terminated by the user/system
 func main() {
 	// Load Environment Variables
 	dialect := os.Getenv("DBDIALECT")
@@ -59,7 +64,7 @@ func main() {
 		fmt.Println("DB Connection Successful.")
 	}
 
-	// Close Database Connection
+	// Safely Close the Database Connection when the process is terminated
 	defer db.Close()
 
 	// API routes
@@ -77,12 +82,18 @@ func main() {
 	http.ListenAndServe(":8080", router)
 }
 
+// getEmployees returns a standard API response as JSON
+// with a set of Employee structs, all records from the Employee table
+// no input
 func getEmployees(w http.ResponseWriter, r *http.Request) {
 	var employees []Employee
 	db.Find(&employees)
 	json.NewEncoder(w).Encode(&employees)
 }
 
+// getEmployee returns a standard API response as JSON
+// with one Employee struct, a single record
+// where input 'id' exactly matches the auto-generated int for the record
 func getEmployee(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var employee Employee
@@ -90,12 +101,18 @@ func getEmployee(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&employee)
 }
 
+// getTasks returns a standard API response as JSON
+// with a set of Task structs, all records from the Tasks table
+// no input
 func getTasks(w http.ResponseWriter, r *http.Request) {
 	var tasks []Task
 	db.Find(&tasks)
 	json.NewEncoder(w).Encode(&tasks)
 }
 
+// getTask returns a standard API response as JSON
+// with one Task struct, a single record
+// where input 'id' exactly matches the auto-generated int for the record
 func getTask(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	var task Task
@@ -104,7 +121,7 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 }
 
 // getEmployeesByTaskName returns a standard API response as JSON
-// with a set of EmployeeEmail and TaskName
+// with a set employeeEmailTaskNames structs, multiple records
 // where input 'searchterm' partially matches Task.Name, case-insensitive
 // by using Inner Joins on the EmployeeTask table
 func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
