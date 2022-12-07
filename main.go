@@ -106,7 +106,7 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
-	//params := mux.Vars(r)
+	params := mux.Vars(r)
 
 	var employees []Employee
 	//var task Task
@@ -116,11 +116,12 @@ func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
 	// db.First(&task, params["searchterm"])
 	// now the task we want should be in &task with task.ID searchable in EmployeeTask
 
-	//whereConditionFormatted := fmt.Sprintf("%s is a %s Portal.\n", name, dept)
-	db.Table("employeetask").Select("Employees.email, Tasks.Name").Joins(
+	//whereConditionFormatted := fmt.Sprintf("LOWER(Tasks.Name) LIKE LOWER('\%%s\%')", params["searchterm"])
+	// Returning Employee Fields but not yet Task Name field
+	db.Table("employeetask").Select("Employees.ID, Employees.email, Employees.Phone, Employees.Role").Joins(
 		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
 		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
-		"LOWER(Tasks.Name) LIKE LOWER('%new%')").Scan(&employees)
+		"LOWER(Tasks.Name) LIKE LOWER('%" + params["searchterm"] + "%')").Scan(&employees)
 
 	/*
 		db.Table("employeetask").Select("Employees.email, Tasks.Name").Joins(
