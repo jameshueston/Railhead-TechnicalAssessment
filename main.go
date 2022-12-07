@@ -66,6 +66,7 @@ func main() {
 
 	router.HandleFunc("/employees", getEmployees).Methods("GET")
 	router.HandleFunc("/employee/{id}", getEmployee).Methods("GET")
+	router.HandleFunc("/employees/searchByTaskName/{searchterm}", getEmployeesByTaskName)
 
 	router.HandleFunc("/tasks", getTasks).Methods("GET")
 	router.HandleFunc("/task/{id}", getTask).Methods("GET")
@@ -102,4 +103,67 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 	var task Task
 	db.First(&task, params["id"])
 	json.NewEncoder(w).Encode(&task)
+}
+
+func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
+	//params := mux.Vars(r)
+
+	var employees []Employee
+	//var task Task
+	//var employeeTask EmployeeTask
+
+	// "searchterm" accepts partial name matches, case-insensitive
+	// db.First(&task, params["searchterm"])
+	// now the task we want should be in &task with task.ID searchable in EmployeeTask
+
+	//whereConditionFormatted := fmt.Sprintf("%s is a %s Portal.\n", name, dept)
+	db.Table("employeetask").Select("Employees.email, Tasks.Name").Joins(
+		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
+		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
+		"LOWER(Tasks.Name) LIKE LOWER('%new%')").Scan(&employees)
+
+	/*
+		db.Table("employeetask").Select("Employees.email, Tasks.Name").Joins(
+		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
+		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
+		"LOWER(Tasks.Name) LIKE LOWER('%?%')", params["searchterm"]).Scan(&employees)
+
+		// .Where("credit_cards.number = ?", "411111111111").Find(&user)
+		-- Search Task name by keyword, ignoring case
+		SELECT Employees.email AS EmployeeEmail, Tasks.Name AS TaskName
+		FROM ((EmployeeTask
+		INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID)
+		INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID)
+		WHERE LOWER(Tasks.Name) LIKE LOWER('%new%');
+
+		db.Model(&Employee{}).Select(
+		"Employees.email, Tasks.name").Joins(
+		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
+		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
+		"LOWER(Tasks.Name) LIKE LOWER('%?%')", params["searchterm"]).Scan(&employees)
+
+		db.Model(&Employee{}).Select(
+		"Employees.email, Tasks.name").Joins(
+		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
+		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
+		"LOWER(Tasks.Name) LIKE LOWER('%new%')").Scan(&employees)
+
+
+
+		db.Model(&User{}).Select("users.name, emails.email").Joins("left join emails on emails.user_id = users.id").Scan(&result{})
+		// SELECT users.name, emails.email FROM `users` left join emails on emails.user_id = users.id
+
+		rows, err := db.Table("users").Select("users.name, emails.email").Joins("left join emails on emails.user_id = users.id").Rows()
+		for rows.Next() {
+			...
+		}
+
+		db.Table("users").Select("users.name, emails.email").Joins("left join emails on emails.user_id = users.id").Scan(&results)
+
+		// multiple joins with parameter
+		db.Joins("JOIN emails ON emails.user_id = users.id AND emails.email = ?", "jinzhu@example.org").Joins("JOIN credit_cards ON credit_cards.user_id = users.id").Where("credit_cards.number = ?", "411111111111").Find(&user)
+
+	*/
+
+	json.NewEncoder(w).Encode(&employees)
 }
