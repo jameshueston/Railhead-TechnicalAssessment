@@ -68,6 +68,7 @@ func main() {
 	router.HandleFunc("/employees", getEmployees).Methods("GET")
 	router.HandleFunc("/employee/{id}", getEmployee).Methods("GET")
 	router.HandleFunc("/employees/searchByTaskName/{searchterm}", getEmployeesByTaskName)
+	router.HandleFunc("/employees/searchByPhone/{searchterm}", getEmployeesByPhoneNumber)
 
 	router.HandleFunc("/tasks", getTasks).Methods("GET")
 	router.HandleFunc("/task/{id}", getTask).Methods("GET")
@@ -102,10 +103,10 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&task)
 }
 
-// getEmployeesByTaskName takes 'searchterm' from the endpoint and
-// returns a standard API response as JSON
-// with Employee Email and Task Names where 'searchterm' partially matches Task.Name
-// case-insensitive by using Inner Joins on the EmployeeTask table
+// getEmployeesByTaskName returns a standard API response as JSON
+// with a set of EmployeeEmail and TaskName
+// where input 'searchterm' partially matches Task.Name, case-insensitive
+// by using Inner Joins on the EmployeeTask table
 func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
@@ -163,4 +164,14 @@ func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(&employeeEmailTaskNames)
+}
+
+// getEmployeesByPhoneNumber returns a standard API response as JSON
+// with a set of Employee structs, all possible records
+// where input 'searchterm' exactly matches Employee.Phone
+func getEmployeesByPhoneNumber(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	var employees []Employee
+	db.Where("phone = ?", params["searchterm"]).Find(&employees)
+	json.NewEncoder(w).Encode(&employees)
 }
