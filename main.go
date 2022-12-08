@@ -23,7 +23,7 @@ type Employee struct {
 // Task matches the Task Table
 type Task struct {
 	ID   int
-	Name string `gorm:"column:task_name"`
+	Name string
 }
 
 // EmployeeTask matches the EmployeeTask Table
@@ -70,7 +70,8 @@ func main() {
 	// API routes
 	router := mux.NewRouter()
 
-	router.HandleFunc("/employees", getEmployees).Methods("GET")
+	//router.Headers("TrailHead-token", "password")
+	router.HandleFunc("/employees", getEmployees).Methods("GET").Headers("TrailHead-token", fmt.Sprintf("%s", "pa$$word"))
 	router.HandleFunc("/employee/{id}", getEmployee).Methods("GET")
 	router.HandleFunc("/employees/searchByTaskName/{searchterm}", getEmployeesByTaskName)
 	router.HandleFunc("/employees/searchByPhone/{searchterm}", getEmployeesByPhoneNumber)
@@ -79,13 +80,29 @@ func main() {
 	router.HandleFunc("/task/{id}", getTask).Methods("GET")
 
 	fmt.Println("Now Serving on localhost:8080")
-	http.ListenAndServe(":8080", router)
+	err := http.ListenAndServe(":8080", router)
+	log.Fatal(err)
+}
+
+func hasCorrectHeaders(r *http.Request) bool {
+	return hasTrailHeadToken(r)
+}
+
+func hasTrailHeadToken(r *http.Request) bool {
+	val := r.Header.Get("TrailHead-token")
+	return val == "pa$$word"
 }
 
 // getEmployees returns a standard API response as JSON
 // with a set of Employee structs, all records from the Employee table
 // no input
 func getEmployees(w http.ResponseWriter, r *http.Request) {
+	if !hasCorrectHeaders(r) {
+		fmt.Fprintf(w, "Permission Denied.\n")
+		log.Println("Request failed to have correct headers.")
+		return
+	}
+
 	var employees []Employee
 	db.Find(&employees)
 	json.NewEncoder(w).Encode(&employees)
