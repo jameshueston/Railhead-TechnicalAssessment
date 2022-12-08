@@ -70,13 +70,13 @@ func main() {
 	// API routes
 	router := mux.NewRouter()
 
-	router.HandleFunc("/employees", getEmployees).Methods("GET").Headers("TrailHead-token", fmt.Sprintf("%s", "pa$$word"))
-	router.HandleFunc("/employee/{id}", getEmployee).Methods("GET").Headers("TrailHead-token", fmt.Sprintf("%s", "pa$$word"))
-	router.HandleFunc("/employees/searchByTaskName/{searchterm}", getEmployeesByTaskName).Headers("TrailHead-token", fmt.Sprintf("%s", "pa$$word"))
-	router.HandleFunc("/employees/searchByPhone/{searchterm}", getEmployeesByPhoneNumber).Headers("TrailHead-token", fmt.Sprintf("%s", "pa$$word"))
+	router.HandleFunc("/employees", getEmployees).Methods("GET").Headers("TrailHead-token", "pa$$word")
+	router.HandleFunc("/employee/{id}", getEmployee).Methods("GET").Headers("TrailHead-token", "pa$$word")
+	router.HandleFunc("/employees/searchByTaskName/{searchterm}", getEmployeesByTaskName).Headers("TrailHead-token", "pa$$word")
+	router.HandleFunc("/employees/searchByPhone/{searchterm}", getEmployeesByPhoneNumber).Headers("TrailHead-token", "pa$$word")
 
-	router.HandleFunc("/tasks", getTasks).Methods("GET").Headers("TrailHead-token", fmt.Sprintf("%s", "pa$$word"))
-	router.HandleFunc("/task/{id}", getTask).Methods("GET").Headers("TrailHead-token", fmt.Sprintf("%s", "pa$$word"))
+	router.HandleFunc("/tasks", getTasks).Methods("GET").Headers("TrailHead-token", "pa$$word")
+	router.HandleFunc("/task/{id}", getTask).Methods("GET").Headers("TrailHead-token", "pa$$word")
 
 	fmt.Println("Now Serving on localhost:8080")
 	err := http.ListenAndServe(":8080", router)
