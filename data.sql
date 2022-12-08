@@ -1,58 +1,125 @@
-SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
-FROM ((Orders
-INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
-INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
+-- CREATE TABLES
+
+CREATE TABLE Employees (
+	id BIGSERIAL NOT NULL PRIMARY KEY,
+	email VARCHAR(50) NOT NULL,
+	phone VARCHAR(50) NOT NULL,
+	role VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Tasks (
+	id BIGSERIAL NOT NULL PRIMARY KEY,
+	name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE employeetask (
+	id BIGSERIAL NOT NULL PRIMARY KEY,
+	employeeid INT NOT NULL REFERENCES employees(id),
+	taskid INT NOT NULL REFERENCES tasks(id)
+);
 
 
--- WORKS, showing all employee emails that have EmployeeID and TaskID in the EmployeeTask table
-SELECT Employees.email
-FROM ((EmployeeTask
-INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID)
-INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID);
+-- ADD CONSTRAINTS
 
--- WORKS
-SELECT Employees.email, Tasks.name
-FROM ((EmployeeTask
-INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID)
-INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID);
+ALTER TABLE employees
+ADD CONSTRAINT role_constraint
+CHECK (role = 'supervisor' OR role = 'worker');
 
--- WORKS
-SELECT Employees.email, Tasks.name
-FROM ((EmployeeTask
-INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID)
-INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID)
-WHERE Tasks.ID = 1;
 
--- WORKS
-SELECT Employees.email, Tasks.name
-FROM ((EmployeeTask
-INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID)
-INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID)
-WHERE Tasks.Name = 'Find the Right People';
+-- SEED TABLE: Employees
 
--- WORKS -- exactly what he asked for
-SELECT Employees.email
-FROM ((EmployeeTask
-INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID)
-INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID)
-WHERE Tasks.Name = 'Find the Right People';
+INSERT INTO Employees (email, phone, role)
+VALUES ('ebanks@mlb.org', '6303236630', 'supervisor');
 
--- Search Task name by keyword, ignoring case
-SELECT Employees.email AS EmployeeEmail, Tasks.Name AS TaskName
-FROM ((EmployeeTask
-INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID)
-INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID)
-WHERE LOWER(Tasks.Name) LIKE LOWER('%new%');
+INSERT INTO Employees (email, phone, role)
+VALUES ('retiredryno@windycityallstars.org','1009071984','supervisor');
 
-db.Model(&User{}).Select("users.name, emails.email").Joins("left join emails on emails.user_id = users.id").Scan(&result{})
-// SELECT users.name, emails.email FROM `users` left join emails on emails.user_id = users.id
+INSERT INTO Employees (email, phone, role)
+VALUES ('sweetswingbilly@hofoutfielders.com','2963921353','supervisor');
 
-rows, err := db.Table("users").Select("users.name, emails.email").Joins("left join emails on emails.user_id = users.id").Rows()
-for rows.Next() {
-  ...
-}
+INSERT INTO Employees (email, phone, role)
+VALUES ('bestpitcherjenkins@wrigleyfield.com','1671321971', 'supervisor');
 
-db.Table("users").Select("users.name, emails.email").Joins("left join emails on emails.user_id = users.id").Scan(&results)
+INSERT INTO Employees (email, phone, role)
+VALUES ('sosa@cubs.mlb','5454966148','supervisor');
 
-// multiple joins with parameter
-db.Joins("JOIN emails ON emails.user_id = users.id AND emails.email = ?", "jinzhu@example.org").Joins("JOIN credit_cards ON credit_cards.user_id = users.id").Where("credit_cards.number = ?", "411111111111").Find(&user)
+INSERT INTO Employees (email, phone, role)
+VALUES ('jhueston@railheadcorp.com', '7088445500', 'worker');
+
+INSERT INTO Employees (email, phone, role)
+VALUES ('benchtester@railheadcorp.com', '7088445500', 'worker');
+
+INSERT INTO Employees (email, phone, role)
+VALUES ('support@railheadcorp.com', '7088445500', 'worker');
+
+INSERT INTO Employees (email, phone, role)
+VALUES ('quality@railheadcorp.com', '7088445500', 'worker');
+
+INSERT INTO Employees (email, phone, role)
+VALUES ('systems@railheadcorp.com', '7088445500', 'worker');
+
+
+-- SEED TABLE: Tasks
+
+INSERT INTO Tasks (name) VALUES ('Find the Right People');
+INSERT INTO Tasks (name) VALUES ('Tailor Jobs to Fit New Hires');
+INSERT INTO Tasks (name) VALUES ('Make Fleetwide Trackers Better');
+INSERT INTO Tasks (name) VALUES ('Create Back Office and Web Apps Customers Need');
+INSERT INTO Tasks (name) VALUES ('Tailor New Product to Small Customers Efficiently');
+
+
+-- SEED TABLE: EmployeeTask
+
+-- Assign Tasks to Supervisors
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (1,1);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (1,2);
+
+-- There was no requirement for every employee to have a task, so prove that it's possible.
+-- Since Ryno is retired (EmployeeID = 2), don't assign him a task; Intentionally commented:
+-- INSERT INTO employeetask (employeeid, taskid)
+-- VALUES (2,2);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (3,1);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (3,3);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (4,4);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (5,5);
+
+-- Assign Tasks to Workers
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (6,4);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (6,5);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (7,3);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (7,5);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (8,3);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (8,4);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (9,3);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (10,3);
+
+INSERT INTO employeetask (employeeid, taskid)
+VALUES (10,4);
+
+-- intentional end
