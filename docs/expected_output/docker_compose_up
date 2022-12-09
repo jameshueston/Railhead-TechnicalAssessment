@@ -1,0 +1,102 @@
+% docker compose up
+[+] Running 3/3
+ ⠿ Volume "technicalassessment_db"     Created                                                                             0.0s
+ ⠿ Container technicalassessment-db-1  Created                                                                             0.0s
+ ⠿ Container rh-workers-app            Created                                                                             0.0s
+Attaching to rh-workers-app, technicalassessment-db-1
+technicalassessment-db-1  | The files belonging to this database system will be owned by user "postgres".
+technicalassessment-db-1  | This user must also own the server process.
+technicalassessment-db-1  | 
+technicalassessment-db-1  | The database cluster will be initialized with locale "en_US.utf8".
+technicalassessment-db-1  | The default database encoding has accordingly been set to "UTF8".
+technicalassessment-db-1  | The default text search configuration will be set to "english".
+technicalassessment-db-1  | 
+technicalassessment-db-1  | Data page checksums are disabled.
+technicalassessment-db-1  | 
+technicalassessment-db-1  | fixing permissions on existing directory /var/lib/postgresql/data ... ok
+technicalassessment-db-1  | creating subdirectories ... ok
+technicalassessment-db-1  | selecting dynamic shared memory implementation ... posix
+technicalassessment-db-1  | selecting default max_connections ... 100
+technicalassessment-db-1  | selecting default shared_buffers ... 128MB
+technicalassessment-db-1  | selecting default time zone ... UTC
+technicalassessment-db-1  | creating configuration files ... ok
+technicalassessment-db-1  | running bootstrap script ... ok
+technicalassessment-db-1  | performing post-bootstrap initialization ... sh: locale: not found
+technicalassessment-db-1  | 2022-12-09 19:56:56.782 UTC [22] WARNING:  no usable system locales were found
+technicalassessment-db-1  | ok
+technicalassessment-db-1  | syncing data to disk ... ok
+technicalassessment-db-1  | 
+technicalassessment-db-1  | 
+technicalassessment-db-1  | Success. You can now start the database server using:
+technicalassessment-db-1  | 
+technicalassessment-db-1  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
+technicalassessment-db-1  | 
+technicalassessment-db-1  | initdb: warning: enabling "trust" authentication for local connections
+technicalassessment-db-1  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+technicalassessment-db-1  | waiting for server to start....2022-12-09 19:56:57.110 UTC [28] LOG:  starting PostgreSQL 15.1 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 12.2.1_git20220924-r4) 12.2.1 20220924, 64-bit
+technicalassessment-db-1  | 2022-12-09 19:56:57.111 UTC [28] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+technicalassessment-db-1  | 2022-12-09 19:56:57.116 UTC [31] LOG:  database system was shut down at 2022-12-09 19:56:57 UTC
+technicalassessment-db-1  | 2022-12-09 19:56:57.119 UTC [28] LOG:  database system is ready to accept connections
+technicalassessment-db-1  |  done
+technicalassessment-db-1  | server started
+technicalassessment-db-1  | 
+technicalassessment-db-1  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/init-workers-db.sh
+technicalassessment-db-1  | CREATE DATABASE
+technicalassessment-db-1  | GRANT
+technicalassessment-db-1  | CREATE TABLE
+technicalassessment-db-1  | CREATE TABLE
+technicalassessment-db-1  | CREATE TABLE
+technicalassessment-db-1  | ALTER TABLE
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | INSERT 0 1
+technicalassessment-db-1  | 
+technicalassessment-db-1  | /usr/local/bin/docker-entrypoint.sh: ignoring /docker-entrypoint-initdb.d/initsql
+technicalassessment-db-1  | 
+technicalassessment-db-1  | waiting for server to shut down....2022-12-09 19:56:57.401 UTC [28] LOG:  received fast shutdown request
+technicalassessment-db-1  | 2022-12-09 19:56:57.401 UTC [28] LOG:  aborting any active transactions
+technicalassessment-db-1  | 2022-12-09 19:56:57.403 UTC [28] LOG:  background worker "logical replication launcher" (PID 34) exited with exit code 1
+technicalassessment-db-1  | 2022-12-09 19:56:57.405 UTC [29] LOG:  shutting down
+technicalassessment-db-1  | 2022-12-09 19:56:57.406 UTC [29] LOG:  checkpoint starting: shutdown immediate
+technicalassessment-db-1  | 2022-12-09 19:56:57.435 UTC [29] LOG:  checkpoint complete: wrote 940 buffers (5.7%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.013 s, sync=0.014 s, total=0.030 s; sync files=262, longest=0.006 s, average=0.001 s; distance=4281 kB, estimate=4281 kB
+technicalassessment-db-1  | 2022-12-09 19:56:57.445 UTC [28] LOG:  database system is shut down
+technicalassessment-db-1  |  done
+technicalassessment-db-1  | server stopped
+technicalassessment-db-1  | 
+technicalassessment-db-1  | PostgreSQL init process complete; ready for start up.
+technicalassessment-db-1  | 
+technicalassessment-db-1  | 2022-12-09 19:56:57.522 UTC [1] LOG:  starting PostgreSQL 15.1 on aarch64-unknown-linux-musl, compiled by gcc (Alpine 12.2.1_git20220924-r4) 12.2.1 20220924, 64-bit
+technicalassessment-db-1  | 2022-12-09 19:56:57.522 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+technicalassessment-db-1  | 2022-12-09 19:56:57.522 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+technicalassessment-db-1  | 2022-12-09 19:56:57.523 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+technicalassessment-db-1  | 2022-12-09 19:56:57.526 UTC [46] LOG:  database system was shut down at 2022-12-09 19:56:57 UTC
+technicalassessment-db-1  | 2022-12-09 19:56:57.529 UTC [1] LOG:  database system is ready to accept connections
+rh-workers-app            | DB Connection Successful.
+rh-workers-app            | Now Serving on localhost:8080
