@@ -58,6 +58,9 @@ func main() {
 	// Database connection string
 	dbURI := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", dbHost, dbUser, dbPassword, dbName, dbPort)
 
+	// initial sleep which is probably enough for db container to be ready
+	time.Sleep(3 * time.Second)
+
 	// Connection Loop, on failure try try again
 	// Works for this small example; for prod, I'd use a better pattern, ie. Connection Pool
 	for {
