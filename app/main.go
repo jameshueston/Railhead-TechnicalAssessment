@@ -152,42 +152,6 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 func getEmployeesByTaskName(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
-	/*
-		// Leaving in these attempts to show thought development
-		// First I wrote raw SQL that WORKS
-		SELECT Employees.email AS EmployeeEmail, Tasks.Name AS TaskName
-		FROM ((EmployeeTask
-		INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID)
-		INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID)
-		WHERE LOWER(Tasks.Name) LIKE LOWER('%new%');
-
-		// Next, I tried but failed several idiomatic Gorm Joins: https://gorm.io/docs/query.html#Joins
-		// the following are succinct highlights
-		db.Model(&EmployeeTask{}).Select(
-		"Employees.email, Tasks.name").Joins(
-		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
-		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
-		"LOWER(Tasks.Name) LIKE LOWER('%" + params["searchterm"] + "%')").Scan(&employees)
-
-		db.Select("Employees.email, Tasks.name").Joins(
-		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
-		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
-		"LOWER(Tasks.Name) LIKE LOWER('%" + params["searchterm"] + "%')").Find(&results)
-
-		db.Table("employeetask").Select("Employees.email, Tasks.name").Joins(
-		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
-		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
-		"LOWER(Tasks.Name) LIKE LOWER('%" + params["searchterm"] + "%')").Scan(&results)
-
-		// WORKS to return Employee Fields but I wanted Task Name and Gorm didn't like that
-		db.Table("employeetask").Select("Employees.ID, Employees.email, Employees.Phone, Employees.Role").Joins(
-		"INNER JOIN Employees ON EmployeeTask.EmployeeID = Employees.ID").Joins(
-		"INNER JOIN Tasks ON EmployeeTask.TaskID = Tasks.ID").Where(
-		"LOWER(Tasks.Name) LIKE LOWER('%" + params["searchterm"] + "%')").Scan(&employees)
-
-		Finally decided to execute raw and extra raw from row data, then remarshal to json as shown below
-	*/
-
 	var employeeEmail string
 	var taskName string
 	var employeeEmailTaskNames []EmployeeEmailTaskName
