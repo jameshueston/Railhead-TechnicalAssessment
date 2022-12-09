@@ -11,7 +11,7 @@ RUN go mod download
 
 COPY *.go ./
 
-RUN go build -o /rh-workers-app
+RUN go build -o /rh-workers-app ./...
 
 ## Deploy
 # For lean deployments of static binaries: https://github.com/GoogleContainerTools/distroless
