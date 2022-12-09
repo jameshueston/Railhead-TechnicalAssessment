@@ -37,10 +37,19 @@ runlocal:
 
 image:
 	-docker rmi ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
-	docker build --tag ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH} -f ${DOCKERFILE} .
+	source env.sh && docker build  \
+	--build-arg var_name=${DBHOST} \
+	--build-arg var_name=${DBPORT} \
+	--build-arg var_name=${DBUSER} \
+	--build-arg var_name=${DBNAME} \
+	--tag ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH} -f ${DOCKERFILE} .
 
 rundocker: image
-	docker run --publish 8080:8080 ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
+	docker run \
+	--env DBHOST=host.docker.internal --env DBPORT=5432 --env DBUSER=james --env DBNAME=workers \
+	--publish 8080:8080 \
+	--add-host=host.docker.internal:host-gateway \
+	${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
 
 push:
 	docker push ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
