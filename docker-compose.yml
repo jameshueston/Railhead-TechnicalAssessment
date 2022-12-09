@@ -12,7 +12,9 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
       - ./db/init-workers-db.sh:/docker-entrypoint-initdb.d/init-workers-db.sh:544
-      - ./db/init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      # Note: 'initsql' is NOT 'init.sql' to prevent auto-running on default 'postgres' db
+      # https://github.com/docker-library/docs/tree/master/postgres#initialization-scripts
+      - ./db/init.sql:/docker-entrypoint-initdb.d/initsql
   app:
     container_name: rh-workers-app
     build:
