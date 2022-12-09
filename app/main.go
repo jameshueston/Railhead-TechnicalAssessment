@@ -48,13 +48,14 @@ var err error
 // keeps running until the process is terminated by the user/system
 func main() {
 	// Load Environment Variables
-	host := os.Getenv("DBHOST")
-	dbPort := os.Getenv("DBPORT")
-	user := os.Getenv("DBUSER")
-	dbName := os.Getenv("DBNAME")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbUser := os.Getenv("DB_USER")
+	dbName := os.Getenv("DB_NAME")
+	dbPassword := os.Getenv("DB_PASSWORD")
 
 	// Database connection string
-	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable port=%s", host, user, dbName, dbPort)
+	dbURI := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", dbHost, dbUser, dbPassword, dbName, dbPort)
 
 	// Open Database Connection
 	db, err = gorm.Open(postgres.Open(dbURI), &gorm.Config{})

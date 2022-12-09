@@ -5,7 +5,7 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=FTaN2x5VVhIH7ts
+      - POSTGRES_PASSWORD=postgres
     ports:
       - '5432:5432'
     volumes:
@@ -27,8 +27,7 @@ services:
       DB_PORT: 5432
       DB_USER: postgres
       DB_PASSWORD: postgres
-      # TODO: update to 'workers' when ready
-      DB_NAME: postgres
+      DB_NAME: workers
     links:
       - db
     volumes:
