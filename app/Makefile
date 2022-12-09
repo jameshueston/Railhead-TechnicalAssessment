@@ -38,6 +38,7 @@ runlocal:
 image: build
 	-docker rmi ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
 	docker build --tag ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH} -f ${DOCKERFILE} .
+	docker tag ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH} ${DOCKER_USERNAME}/${APPLICATION_NAME}:latest
 
 # Run the app in a container, connecting to postgres running on the host
 rundocker: image
@@ -46,6 +47,7 @@ rundocker: image
 	--publish 8080:8080 \
 	--add-host=host.docker.internal:host-gateway \
 	${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
+	
 
 push:
 	docker push ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}

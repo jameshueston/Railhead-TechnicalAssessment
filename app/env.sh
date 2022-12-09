@@ -1,5 +1,3 @@
-#!/bin/zsh
-
 # 'source env.sh' for running on local, main.go looks for these
 # for running in docker, docker-compose.yml has its own vars
 # TODO: Future - place these in secure config mgmt
