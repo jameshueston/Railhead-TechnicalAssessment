@@ -1,7 +1,7 @@
 # Getting Started
 
 1. Clone the Project
-    - `INSERT CLONE HERE`
+    - `git clone git@github.com:jameshueston/Railhead-TechnicalAssessment.git`
 
 1. Start Services
     - `docker compose up`
@@ -13,7 +13,7 @@
     - `docker compose rm --force`
     - `docker volume rm technicalassessment_db`
 
-This was tested on `docker v20.10.21`.
+This was tested on docker v20.10.21.
 
 # Example Queries
     
