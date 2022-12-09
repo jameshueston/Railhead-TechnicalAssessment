@@ -16,8 +16,8 @@ services:
     container_name: rh-workers-app
     build:
       context: ./
-      #target: production
-    image: rh-workers-app
+      target: dev
+    image: jameshueston/rh-workers-app:latest
     depends_on:
       - db
     ports:

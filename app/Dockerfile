@@ -15,7 +15,7 @@ RUN go build -o /rh-workers-app ./...
 
 ## Deploy
 # For lean deployments of static binaries: https://github.com/GoogleContainerTools/distroless
-FROM gcr.io/distroless/base-debian10
+FROM gcr.io/distroless/base-debian10 AS dev
 
 WORKDIR /
 
