@@ -17,9 +17,6 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/initsql
   app:
     container_name: rh-workers-app
-    build:
-      context: ./
-      target: dev
     image: jameshueston/rh-workers-app:latest
     depends_on:
       - db
