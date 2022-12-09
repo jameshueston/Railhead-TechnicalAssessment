@@ -5,7 +5,7 @@ BINARY_DIR = bin
 GOBINARY = rh-workers-app
 APPLICATION_NAME = rh-workers-app
 DOCKER_USERNAME = jameshueston
-DOCKERFILE = Dockerfile.multistage
+DOCKERFILE = Dockerfile
 
 all: fmt clean build deps
 
