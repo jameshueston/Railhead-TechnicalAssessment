@@ -7,9 +7,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/gorilla/mux"                     // Serves API Routes
-	"github.com/jinzhu/gorm"                     // Facilitates postgres db queries
-	_ "github.com/jinzhu/gorm/dialects/postgres" // Enables gorm to use postgres driver
+	"github.com/gorilla/mux" // Serves API Routes
+
+	"gorm.io/driver/postgres" // Enables gorm to use postgres driver
+	"gorm.io/gorm"            // Facilitates postgres db queries
 )
 
 // Employee matches the Employee Table
@@ -47,7 +48,6 @@ var err error
 // keeps running until the process is terminated by the user/system
 func main() {
 	// Load Environment Variables
-	dialect := os.Getenv("DBDIALECT")
 	host := os.Getenv("DBHOST")
 	dbPort := os.Getenv("DBPORT")
 	user := os.Getenv("DBUSER")
@@ -57,15 +57,12 @@ func main() {
 	dbURI := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable port=%s", host, user, dbName, dbPort)
 
 	// Open Database Connection
-	db, err = gorm.Open(dialect, dbURI)
+	db, err = gorm.Open(postgres.Open(dbURI), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		panic("Failed to Connect to Database")
 	} else {
 		fmt.Println("DB Connection Successful.")
 	}
-
-	// Safely Close the Database Connection when the process is terminated
-	defer db.Close()
 
 	// API routes
 	router := mux.NewRouter()
