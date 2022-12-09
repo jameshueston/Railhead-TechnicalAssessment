@@ -1,5 +1,6 @@
 .PHONY: build run clean image
 
+SHELL := /bin/zsh
 GIT_HASH ?= $(shell git log --format="%h" -n 1)
 BINARY_DIR = bin
 GOBINARY = rh-workers-app
@@ -29,7 +30,7 @@ deps:
 	go mod tidy
 
 runlocal:
-	./${BINARY_DIR}/${GOBINARY}
+	source env.sh && ./${BINARY_DIR}/${GOBINARY}
 
 #####################################
 # Docker targets
