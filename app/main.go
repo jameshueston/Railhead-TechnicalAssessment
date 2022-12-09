@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gorilla/mux" // Serves API Routes
 
@@ -57,12 +58,22 @@ func main() {
 	// Database connection string
 	dbURI := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", dbHost, dbUser, dbPassword, dbName, dbPort)
 
-	// Open Database Connection
-	db, err = gorm.Open(postgres.Open(dbURI), &gorm.Config{})
-	if err != nil {
-		panic("Failed to Connect to Database")
-	} else {
-		fmt.Println("DB Connection Successful.")
+	// Connection Loop, on failure try try again
+	// Works for this small example; for prod, I'd use a better pattern, ie. Connection Pool
+	for {
+
+		// Open Database Connection
+		db, err = gorm.Open(postgres.Open(dbURI), &gorm.Config{})
+		if err != nil {
+			fmt.Println(err.Error())
+		} else {
+			fmt.Println("DB Connection Successful.")
+			break
+		}
+
+		fmt.Print(".") // small progress indicator
+		time.Sleep(1 * time.Second)
+		continue
 	}
 
 	// API routes
