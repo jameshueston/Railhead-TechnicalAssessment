@@ -37,13 +37,9 @@ runlocal:
 
 image:
 	-docker rmi ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH}
-	source env.sh && docker build  \
-	--build-arg var_name=${DBHOST} \
-	--build-arg var_name=${DBPORT} \
-	--build-arg var_name=${DBUSER} \
-	--build-arg var_name=${DBNAME} \
-	--tag ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH} -f ${DOCKERFILE} .
+	docker build --tag ${DOCKER_USERNAME}/${APPLICATION_NAME}:${GIT_HASH} -f ${DOCKERFILE} .
 
+# Run the app in a container, connecting to postgres running on the host
 rundocker: image
 	docker run \
 	--env DBHOST=host.docker.internal --env DBPORT=5432 --env DBUSER=james --env DBNAME=workers \
